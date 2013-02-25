@@ -9,7 +9,7 @@ body { font-family:sans; }
 <div style="width:160px; display:inline-block">Password: </div><input type="password" name="passw"><br><br>
 
 <div style="width:160px; display:inline-block">Board type: </div><select name="boardtype">
-<option value="genesysv5">Genesys Virtex-5</option>
+<option value="Nexys3">Nexys3 Spartan6</option>
 </select><br>
 
 <div style="width:160px; display:inline-block">TTY Baud Rate: </div><select name="baudrate">

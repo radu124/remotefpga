@@ -67,8 +67,8 @@ function cleanvar($n)
 	
 	switch($uboardtype)
 	{
-	case "genesysv5":
-		if ($filesize<400 || $filesize>1000)
+	case "Nexys3":
+		if ($filesize<400 || $filesize>500)
 			exit("File size: $filesize not matching this board type");
 		break;
 	default:
