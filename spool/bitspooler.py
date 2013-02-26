@@ -32,6 +32,9 @@ class ListenerThread(Thread):
 		b=self.b
 		task=self.task
 		bytecount=0
+		# wait first so that we don't get any garbage from a previous task
+		# assume it takes at least 1 second to program the FPGA
+		time.sleep(1)
 		try:
 			ser=serial.Serial(port = b.tty, baudrate=task.baudrate,timeout=1)
 			fou=open("%s/ttyout"%task.fn,"w")
@@ -69,7 +72,16 @@ class ListenerThread(Thread):
 		b.listenthread=None
 		b.inuse=False
 		task.finished=True
+		task.finishtime=time.time()
 
+def put_to_file(fn,s):
+	try:
+		f=open(fn,"w")
+		f.write(s)
+		f.close()
+	except:
+		traceback.print_exc()
+		
 class ProgThread(Thread):
 	def __init__(self,fn,boardname):
 		self.fn=fn
@@ -112,6 +124,9 @@ while True:
 			nt.fn=fn
 			nt.started=os.path.isfile("%s/finished"%fn)
 			nt.finished=os.path.isfile("%s/finished"%fn)
+			nt.finishtime=1e20
+			if nt.finished:
+				nt.finishtime=os.stat("%s/finished"%fn).st_mtime;
 			nt.error=os.path.isfile("%s/error"%fn)
 			if nt.finished:
 				print("Task %s is already done"%(fn))
@@ -126,6 +141,10 @@ while True:
 		timenow=time.time()
 		if timenow-task.starttime>3600:
 			print("Task %s is more than 1 hour old (%d seconds), deleting"%(fn,timenow-task.starttime))
+			shutil.rmtree("./%s"%fn)
+			continue
+		if timenow-task.finishtime>600:
+			print("Task %s has finished more than 10 minutes ago (%d seconds), deleting"%(fn,timenow-task.starttime))
 			shutil.rmtree("./%s"%fn)
 			continue
 		if os.path.isfile("%s/remove"):
@@ -149,6 +168,7 @@ while True:
 			break
 		if jobstarted:
 			continue
+		put_to_file("%s/inqueue"%fn,str(taskswaiting))
 		taskswaiting+=1
 	if taskswaiting!=lasttaskswaiting:
 		print("Tasks waiting:",taskswaiting)
