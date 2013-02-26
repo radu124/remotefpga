@@ -151,6 +151,10 @@ while True:
 			print("Task %s is marked for removal, deleting"%(fn))
 			shutil.rmtree("./%s"%fn)
 			continue
+		if not os.path.isfile("%s/bit.bit"%fn):
+			print("Task %s does not have a bit-file, deleting"%(fn))
+			shutil.rmtree("./%s"%fn)
+			continue
 		if task.started or task.error:
 			continue
 		jobstarted=False
