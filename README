@@ -1,1 +1,43 @@
 Platform to allow running FPGA experiments remotely
+
+INSTALLATION NOTES
+==================
+
+The entire folder has to be placed somwhere it can be served using a HTTP server
+(for example Apache) and this server must support php.
+
+Make sure that the
+spool/
+ and
+admin/
+ directories are not readable from the web (that the .htaccess are in effect 
+ - this is disabled in newer versions of Apache)
+
+New requests from users are stored as separate directories in the spool directory.
+
+The bitspooler.py program in the spool/ directory must be run there with proper rights
+to both read/write the newly created directories (must run as www-data) and you must
+make sure it has the right to configure the fpga board and to read the TTY
+(in Ubuntu add the user to the "dialout" group) - Digilent boards are accessible by 
+default, after the Digilent Adept software has been installed.
+
+CONFIGURATION
+=============
+The user names and passwords are found in plain text in the admin folder (this is why it
+is important for this folder to be inaccessible via web). Depending on your setup you
+may want to move this somewhere else. If you do this you need to specify the new location
+in settings.php.
+
+The users (and passwords) file (default: admin/users.txt) lists one user on each line,
+followed by one space, followed by the password.
+
+USAGE
+=====
+
+When both the web-server and the bitspooler.py are running simply access the web-page,
+provide the design that you want uploaded, fill-in your user-name and password, choose
+a board type (if more options are available) and a baud rate and click Submit.
+
+A web-page displaying status will refresh every few seconds, then the output from the
+serial port is returned as a download.
+
