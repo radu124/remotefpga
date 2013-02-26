@@ -1,6 +1,9 @@
 <html><head><title>Remote experiment</title></head>
 <body>
 <?php
+
+require("settings.php");
+
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
@@ -11,19 +14,21 @@ function startsWith($haystack, $needle)
 
 function randomspooldir()
 {
+	global $SPOOLDIRECTORY;
 	for ($i=0; $i<500; $i++)
 	{
 		$nr=1000000+rand(1,32000);
-		$success=mkdir("spool/$nr");
+		$success=mkdir("$SPOOLDIRECTORY/$nr");
 		if ($success) break;
 	}
 	if (!$success) exit("Server error, cannot create spool directory"); 
-	return "spool/$nr";
+	return "$SPOOLDIRECTORY/$nr";
 }
 
 function cleanupexit($spooldir,$msg)
 {
-	if (startsWith($spooldir,"spool/"))
+	global $SPOOLDIRECTORY;
+	if (startsWith($spooldir,"$SPOOLDIRECTORY/"))
 	{
 		$files = glob($spooldir.'/*', GLOB_MARK);
 		foreach ($files as $file) {
@@ -46,7 +51,7 @@ function cleanvar($n)
 	$uboardtype=cleanvar("boardtype");
 	$ubaudrate =cleanvar("baudrate");
 	$loginok   =False;
-	$passfile=file("admin/users.txt");
+	$passfile=file("$PASSFILELOCATION");
 	foreach($passfile as $ul)
 	{
 		$un=explode(" ",$ul,2);

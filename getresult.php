@@ -1,4 +1,7 @@
 <?php
+
+require("settings.php");
+
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
@@ -16,13 +19,13 @@ $retried=cleanvar("retried");
 if ($retried=="") $retried=1;
 else $retried=$retried+1;
 
-if (!file_exists("spool/".$job."/key"))
+if (!file_exists("$SPOOLDIRECTORY/".$job."/key"))
 {
 	header("HTTP/1.1 403 Forbidden");
 	exit("Invalid job id or key.");
 }
 
-$dkey=trim(file_get_contents("spool/".$job."/key"));
+$dkey=trim(file_get_contents("$SPOOLDIRECTORY/".$job."/key"));
 
 if ($ukey!=$dkey)
 {
@@ -30,12 +33,12 @@ if ($ukey!=$dkey)
 	exit("Invalid job id or key.");
 }
 
-if (file_exists("spool/".$job."/finished"))
+if (file_exists("$SPOOLDIRECTORY/".$job."/finished"))
 {
 	//header('Content-type: text/plain');
 	header('Content-type: application/octet-stream');
 	header('Content-Disposition: attachment; filename="ttylog.txt"');
-	readfile("spool/".$job."/ttyout");
+	readfile("$SPOOLDIRECTORY/".$job."/ttyout");
 	exit();
 }
 
@@ -58,12 +61,12 @@ if ($auto=="yes")
 <meta http-equiv="refresh" content="2;url=<?php echo "$newlink"; ?>">
 <body>
 <?php
-	if (!file_exists("spool/".$job."/ttyout"))
+	if (!file_exists("$SPOOLDIRECTORY/".$job."/ttyout"))
 	{
 		echo "Job queued.";
-		if (file_exists("spool/".$job."/inqueue"))
+		if (file_exists("$SPOOLDIRECTORY/".$job."/inqueue"))
 		{
-			$inqueue=trim(file_get_contents("spool/".$job."/inqueue"));
+			$inqueue=trim(file_get_contents("$SPOOLDIRECTORY/".$job."/inqueue"));
 			echo "<br>$inqueue other jobs in queue before this one.";
 		}
 	} else {
