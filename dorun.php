@@ -62,7 +62,7 @@ function cleanvar($n)
 	}
 	
 	if (!$loginok)
-		exit("Incorrect login $uloginid $upassw");
+		exit("Incorrect login $uloginid");
 	
 	if ($_FILES["file"]["error"] > 0)
 	{
